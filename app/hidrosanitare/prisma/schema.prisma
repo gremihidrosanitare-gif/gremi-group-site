@@ -1,0 +1,31 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // Filled automatically when connecting to Vercel/Supabase
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Property {
+  id            Int             @id @default(autoincrement())
+  region        String          // "Vlorë" or "Pogradec"
+  basePrice     Float           // Nightly standard rate
+  blockedDates  BlockedDate[]
+  customPricing CustomPricing[]
+}
+
+model BlockedDate {
+  id         Int      @id @default(autoincrement())
+  propertyId Int
+  date       DateTime
+  property   Property @relation(fields: [propertyId], references: [id])
+}
+
+model CustomPricing {
+  id         Int      @id @default(autoincrement())
+  propertyId Int
+  date       DateTime
+  price      Float
+  property   Property @relation(fields: [propertyId], references: [id])
+}
